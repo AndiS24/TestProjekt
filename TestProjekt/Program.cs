@@ -11,11 +11,12 @@ namespace TestProjekt
         public static void Main(string[] args)
         {
             SQLconnect db = new SQLconnect();
+            string[] text;
 
             db.SQLopen();
             Console.WriteLine("DB offen");
-            //text = db.SQLselect();
-            //Console.WriteLine(text);
+            text = db.SQLselect();
+            Console.WriteLine(text);
             db.SQLclose();
             Console.WriteLine("DB geschlossen");
 

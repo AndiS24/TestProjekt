@@ -6,6 +6,7 @@ namespace TestProjekt
     public class SQLconnect : Params
     {
         MySqlConnectionStringBuilder conn_string = new MySqlConnectionStringBuilder();
+        public string[] list;
 
         public SQLconnect()
         {
@@ -32,7 +33,7 @@ namespace TestProjekt
         {
             MySqlConnection MyCon = new MySqlConnection(conn_string.ToString());
             MySqlCommand cmd = new MySqlCommand("SELECT Länge FROM Dingelsdorf;", MyCon);
-            string[] list;
+
 
             try
             {
