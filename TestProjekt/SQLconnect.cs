@@ -1,13 +1,16 @@
 ﻿using System;
+using System.Collections.Generic;
 using MySql.Data.MySqlClient;
 
 namespace TestProjekt
 {
     public class SQLconnect : Params
     {
-        MySqlConnectionStringBuilder conn_string = new MySqlConnectionStringBuilder();
-        public string[] list;
+        protected MySqlConnectionStringBuilder conn_string = new MySqlConnectionStringBuilder();
+        public List<string> list = new List<string>();
+        //public string[] list;
 
+        //Übergabe der Parameter zum öffnen der SQL Datenbank
         public SQLconnect()
         {
             conn_string.Server = Server;
@@ -17,44 +20,53 @@ namespace TestProjekt
             conn_string.Database = Database;
         }
 
-        public void SQLopen()
-        {
-            MySqlConnection MyCon = new MySqlConnection(conn_string.ToString());
-            MyCon.Open();
-        }
-
+        //Schließen der aktuellen Verbindung zur Datenbank
         public void SQLclose()
         {
             MySqlConnection MyCon = new MySqlConnection();
             MyCon.Close();
         }
 
-        public string[] SQLselect()
+        //Datenwerte aus der Datenbank auslesen
+        public List<string> SQLselect(string SearchParam, string Harbour)
         {
             MySqlConnection MyCon = new MySqlConnection(conn_string.ToString());
-            MySqlCommand cmd = new MySqlCommand("SELECT Länge FROM Dingelsdorf;", MyCon);
-
+            MyCon.Open();
+            MySqlCommand cmd = new MySqlCommand("SELECT " + SearchParam + " FROM " + Harbour + ";", MyCon);
 
             try
             {
-                //MyCon.Open();
-                //Console.WriteLine("Open");
-
                 MySqlDataReader reader = cmd.ExecuteReader();
 
                 while (reader.Read())
                 {
-                    for (int i = 0; i < reader.GetString(0).Length; i++)
-                    {
-                        list[i] = reader.GetString(0).ToString();
-                    }
+                    list.Add(reader.GetString(0));
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
             }
+            MyCon.Close();
             return list;
+        }
+
+        //Datensätze updaten
+        public void SQLupdate(string UpdateParam, string Harbour)
+        {
+            MySqlConnection MyCon = new MySqlConnection(conn_string.ToString());
+            MyCon.Open();
+            MySqlCommand cmd = new MySqlCommand("UPDATE " + UpdateParam + " FROM " + Harbour + ";", MyCon);
+            try
+            {
+                cmd.ExecuteNonQuery();
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            MyCon.Close();
         }
 
     }
