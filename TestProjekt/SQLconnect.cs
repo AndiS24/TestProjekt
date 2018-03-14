@@ -7,7 +7,7 @@ namespace TestProjekt
     public class SQLconnect : Params
     {
         protected MySqlConnectionStringBuilder conn_string = new MySqlConnectionStringBuilder();
-        public List<string> list = new List<string>();
+        protected List<string> list = new List<string>();
         //public string[] list;
 
         //Übergabe der Parameter zum öffnen der SQL Datenbank
@@ -33,6 +33,7 @@ namespace TestProjekt
             MySqlConnection MyCon = new MySqlConnection(conn_string.ToString());
             MyCon.Open();
             MySqlCommand cmd = new MySqlCommand("SELECT " + SearchParam + " FROM " + Harbour + ";", MyCon);
+            list.Clear();
 
             try
             {
@@ -61,6 +62,23 @@ namespace TestProjekt
             {
                 cmd.ExecuteNonQuery();
 
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            MyCon.Close();
+        }
+
+        //Datensätze löschen
+        public void SQLdelete(string DeleteParam, string Harbour)
+        {
+            MySqlConnection MyCon = new MySqlConnection(conn_string.ToString());
+            MyCon.Open();
+            MySqlCommand cmd = new MySqlCommand("DELETE " + DeleteParam + " FROM " + Harbour + ";", MyCon);
+            try
+            {
+                cmd.ExecuteNonQuery();
             }
             catch (Exception ex)
             {
