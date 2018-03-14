@@ -28,11 +28,19 @@ namespace TestProjekt
         }
 
         //Datenwerte aus der Datenbank auslesen
-        public List<string> SQLselect(string SearchParam, string Harbour)
+        public List<string> SQLselect(string SelectParam, string Harbour)
         {
             MySqlConnection MyCon = new MySqlConnection(conn_string.ToString());
-            MyCon.Open();
-            MySqlCommand cmd = new MySqlCommand("SELECT " + SearchParam + " FROM " + Harbour + ";", MyCon);
+            try
+            {
+                MyCon.Open();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message + "\nEs konnte keine Verbindung hergestellt werden.");
+            }
+
+            MySqlCommand cmd = new MySqlCommand("SELECT " + SelectParam + " FROM " + Harbour + ";", MyCon);
             list.Clear();
 
             try
@@ -41,23 +49,33 @@ namespace TestProjekt
 
                 while (reader.Read())
                 {
-                    list.Add(reader.GetString(0));
+                    for (int i = 0; i < reader.FieldCount; i++)
+                    {
+                        list.Add(reader.GetString(i));
+                    }
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Console.WriteLine(ex.Message + "\nDatenauswahl fehlgeschlagen.");
             }
             MyCon.Close();
             return list;
         }
 
-        //Datensätze updaten
-        public void SQLupdate(string UpdateParam, string Harbour)
+        //"State" Spalte auf 0/1 setzen (1=frei, 0=belegt) 
+        public void SQLupdateState(int UpdateParam, string Harbour, int place)
         {
             MySqlConnection MyCon = new MySqlConnection(conn_string.ToString());
-            MyCon.Open();
-            MySqlCommand cmd = new MySqlCommand("UPDATE " + UpdateParam + " FROM " + Harbour + ";", MyCon);
+            try
+            {
+                MyCon.Open();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message + "\nEs konnte keine Verbindung hergestellt werden.");
+            }
+            MySqlCommand cmd = new MySqlCommand("UPDATE " + Harbour + " SET State = " + UpdateParam + " WHERE Place = " + place + ";", MyCon);
             try
             {
                 cmd.ExecuteNonQuery();
@@ -70,12 +88,44 @@ namespace TestProjekt
             MyCon.Close();
         }
 
-        //Datensätze löschen
-        public void SQLdelete(string DeleteParam, string Harbour)
+        //"Length" Spalte verändern
+        public void SQLupdateLenght(string LengthParam, string Harbour, int place)
         {
             MySqlConnection MyCon = new MySqlConnection(conn_string.ToString());
-            MyCon.Open();
-            MySqlCommand cmd = new MySqlCommand("DELETE " + DeleteParam + " FROM " + Harbour + ";", MyCon);
+            try
+            {
+                MyCon.Open();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message + "\nEs konnte keine Verbindung hergestellt werden.");
+            }
+            MySqlCommand cmd = new MySqlCommand("UPDATE " + Harbour + " SET Length = '" + LengthParam + "' WHERE Place = " + place + ";", MyCon);
+            try
+            {
+                cmd.ExecuteNonQuery();
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            MyCon.Close();
+        }
+
+        //Platz X löschen
+        public void SQLdeletePlace(int place, string Harbour)
+        {
+            MySqlConnection MyCon = new MySqlConnection(conn_string.ToString());
+            try
+            {
+                MyCon.Open();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message + "\nEs konnte keine Verbindung hergestellt werden.");
+            }
+            MySqlCommand cmd = new MySqlCommand("DELETE FROM " + Harbour + " WHERE Place = " + place + ";", MyCon);
             try
             {
                 cmd.ExecuteNonQuery();
@@ -86,6 +136,5 @@ namespace TestProjekt
             }
             MyCon.Close();
         }
-
     }
 }
