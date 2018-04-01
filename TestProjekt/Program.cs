@@ -10,7 +10,7 @@ namespace TestProjekt
         public static void Main()
         {
             string Harbour = "Harbours";
-            string SelectParam = "Harbour, HarbourID, PlaceNr, Length, Occupied";
+            string SelectParam = "Harbour";
             string Places = "Places";
             int ID = 3;
             //int OccParam = 1;
